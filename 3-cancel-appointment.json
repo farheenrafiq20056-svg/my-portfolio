@@ -1,0 +1,634 @@
+{
+  "name": "cancel_appointment - vapi n8n Yt",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e921d43d-9966-4a84-b6f4-37aef587272b",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -192
+      ],
+      "id": "8676f796-b418-41f5-aba1-1891d872b4c0",
+      "name": "Webhook",
+      "webhookId": "e921d43d-9966-4a84-b6f4-37aef587272b"
+    },
+    {
+      "parameters": {
+        "url": "https://api.cal.com/v2/bookings",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "attendeeEmail",
+              "value": "={{ $json.body.message.toolCallList[0].function.arguments.email }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "cal-api-version",
+              "value": " 2024-08-13"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_a317483b2d1a34fa5c26d58bf8bea466"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        272,
+        -192
+      ],
+      "id": "7556e022-5a59-48a4-87be-dd97c482c307",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "79f8eb64-654d-4ea5-b590-5e1acfc35a23",
+              "leftValue": "={{ $json.data[1].uid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        -192
+      ],
+      "id": "93e1fe45-d346-48be-a665-aec229cff08f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n      \"result\": \"appointment successfully cancelled\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        896,
+        -288
+      ],
+      "id": "b46e7d91-f915-4c48-8c58-7dad7ccaa4d9",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cal.com/v2/bookings/{{ $json.data[1].uid }}/cancel",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "cal-api-version",
+              "value": "2024-08-13"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_a317483b2d1a34fa5c26d58bf8bea466"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cancellationReason",
+              "value": "Customer Requested"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        688,
+        -288
+      ],
+      "id": "75324210-7b8d-4729-b7c8-863bf127de8a",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n      \"result\": \"appointment unsuccessfully cancelled\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "6e46158e-aa25-4b76-b247-69317bcbc195",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "ashtonvosstestapp.app.n8n.cloud",
+            "user-agent": "axios/1.8.3",
+            "content-length": "14041",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "baggage": "sentry-environment=production,sentry-public_key=fac6f282c765ce50b18c3fa0305f8a8b,sentry-trace_id=3152498c1b6a45188177924a30a8c509",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "35.90.24.166",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "9c4f5351a7209314-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "cookie": "callId=",
+            "sentry-trace": "3152498c1b6a45188177924a30a8c509-87d1a76135e53ce5",
+            "traceparent": "00-5794e8b03f5ad83ba0c37fed6260bd93-b39aca0070638edd-01",
+            "x-chat-id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5",
+            "x-forwarded-for": "35.90.24.166, 104.23.160.33",
+            "x-forwarded-host": "ashtonvosstestapp.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-54-58b646fcb5-cdgwt",
+            "x-is-trusted": "yes",
+            "x-real-ip": "35.90.24.166",
+            "x-vapi-secret": ""
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "message": {
+              "timestamp": 1769591099011,
+              "type": "tool-calls",
+              "toolCalls": [
+                {
+                  "id": "call_VdshnKymyudmlSq25WO4UAlV",
+                  "type": "function",
+                  "function": {
+                    "name": "cancell_appointment",
+                    "arguments": {
+                      "email": "ashtonvoss47@gmail.com"
+                    }
+                  }
+                }
+              ],
+              "toolCallList": [
+                {
+                  "id": "call_VdshnKymyudmlSq25WO4UAlV",
+                  "type": "function",
+                  "function": {
+                    "name": "cancell_appointment",
+                    "arguments": {
+                      "email": "ashtonvoss47@gmail.com"
+                    }
+                  }
+                }
+              ],
+              "toolWithToolCallList": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "cancell_appointment",
+                    "parameters": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "default": "",
+                          "description": "email of the customer"
+                        }
+                      }
+                    },
+                    "description": "this tool will be used to cancell the appointment"
+                  },
+                  "server": {
+                    "url": "https://ashtonvosstestapp.app.n8n.cloud/webhook/e921d43d-9966-4a84-b6f4-37aef587272b",
+                    "timeoutSeconds": 20,
+                    "headers": {
+                      "X-Chat-Id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5"
+                    }
+                  },
+                  "messages": [
+                    {
+                      "type": "request-start",
+                      "contents": [],
+                      "conditions": [],
+                      "blocking": false
+                    }
+                  ],
+                  "toolCall": {
+                    "id": "call_VdshnKymyudmlSq25WO4UAlV",
+                    "type": "function",
+                    "function": {
+                      "name": "cancell_appointment",
+                      "arguments": {
+                        "email": "ashtonvoss47@gmail.com"
+                      }
+                    }
+                  }
+                }
+              ],
+              "artifact": {
+                "messages": [
+                  {
+                    "role": "system",
+                    "message": "##Role\n\nYou are Emily, the receptionist agent for CoolAir HVAC Services. You handle appointment bookings, rescheduling, and cancellations for customers calling about HVAC services.\n\n## Personality\n\nFriendly, approachable, helpful, and solution-oriented. You maintain professionalism while keeping interactions efficient and supportive.\n\n\n## Current Time\n\nCurrent time is: Wednesday, January 28, 2026, 07:04 PM\n\n##Tone\n\nUpbeat, clear, and professional. Keep the conversation moving while being accommodating to customer needs.\n\n##Booking Appointments\n\n##Goal\nCollect required information, check availability, and book HVAC service appointments.\n\n##Process: \n\nStep 1: Collect Name \n- ask: Can I get your full name?\"\nConfirm: \"Great, [NAME]!\"\n\nStep 2: Collect Service Type\n- Ask: \"What type of service do you need? AC repair, heating repair, maintenance, installation, or something else?\"\n- Confirm: \"Got it, a [TYPE] appointment.\"\n\nStep 3: Collect Preferred Date/Time\n- Ask: \"What day and time would wo...",
+                    "time": 1769591098274,
+                    "secondsFromStart": 0
+                  },
+                  {
+                    "role": "bot",
+                    "message": "Hello this is Emily from  CoolAir HVAC Services. How may i help you today?",
+                    "time": 1769591098274,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "role": "user",
+                    "message": "cancell",
+                    "time": 1769591098275,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "role": "bot",
+                    "message": "Sure—I can help you cancel your appointment.\n\nCan I get the email address you used for the booking?",
+                    "time": 1769591098276,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "role": "user",
+                    "message": "ashtonvoss47@gmail.com",
+                    "time": 1769591098277,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "role": "bot",
+                    "message": "Thanks! Let me confirm— that's **a s h t o n v o s s 4 7 at g m a i l dot c o m**, is that correct?",
+                    "time": 1769591098278,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "role": "user",
+                    "message": "yes",
+                    "time": 1769591098279,
+                    "secondsFromStart": 0,
+                    "endTime": 1769591098274
+                  },
+                  {
+                    "toolCalls": [
+                      {
+                        "id": "call_VdshnKymyudmlSq25WO4UAlV",
+                        "type": "function",
+                        "function": {
+                          "name": "cancell_appointment",
+                          "arguments": "{\"email\": \"ashtonvoss47@gmail.com\"}"
+                        }
+                      }
+                    ],
+                    "role": "tool_calls",
+                    "message": "",
+                    "time": 1769591099004,
+                    "secondsFromStart": 0.73
+                  }
+                ],
+                "messagesOpenAIFormatted": [
+                  {
+                    "role": "system",
+                    "content": "##Role\n\nYou are Emily, the receptionist agent for CoolAir HVAC Services. You handle appointment bookings, rescheduling, and cancellations for customers calling about HVAC services.\n\n## Personality\n\nFriendly, approachable, helpful, and solution-oriented. You maintain professionalism while keeping interactions efficient and supportive.\n\n\n## Current Time\n\nCurrent time is: Wednesday, January 28, 2026, 07:04 PM\n\n##Tone\n\nUpbeat, clear, and professional. Keep the conversation moving while being accommodating to customer needs.\n\n##Booking Appointments\n\n##Goal\nCollect required information, check availability, and book HVAC service appointments.\n\n##Process: \n\nStep 1: Collect Name \n- ask: Can I get your full name?\"\nConfirm: \"Great, [NAME]!\"\n\nStep 2: Collect Service Type\n- Ask: \"What type of service do you need? AC repair, heating repair, maintenance, installation, or something else?\"\n- Confirm: \"Got it, a [TYPE] appointment.\"\n\nStep 3: Collect Preferred Date/Time\n- Ask: \"What day and time would wo..."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Hello this is Emily from  CoolAir HVAC Services. How may i help you today?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "cancell"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Sure—I can help you cancel your appointment.\n\nCan I get the email address you used for the booking?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "ashtonvoss47@gmail.com"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Thanks! Let me confirm— that's **a s h t o n v o s s 4 7 at g m a i l dot c o m**, is that correct?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "yes"
+                  },
+                  {
+                    "role": "assistant",
+                    "tool_calls": [
+                      {
+                        "id": "call_VdshnKymyudmlSq25WO4UAlV",
+                        "type": "function",
+                        "function": {
+                          "name": "cancell_appointment",
+                          "arguments": "{\"email\": \"ashtonvoss47@gmail.com\"}"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "role": "tool",
+                    "tool_call_id": "call_VdshnKymyudmlSq25WO4UAlV",
+                    "content": "Tool Result Still Pending But Proceed Further If Possible."
+                  }
+                ]
+              },
+              "chat": {
+                "id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5",
+                "orgId": "9ef98872-e14c-4c0b-bd9c-f58b776a1d05",
+                "createdAt": "2025-01-18T06:43:46.401Z",
+                "updatedAt": "2026-01-28T08:57:58.217Z"
+              },
+              "assistant": {
+                "id": "6deb3db8-dde9-4e27-b4f6-674d21815c5e",
+                "orgId": "9ef98872-e14c-4c0b-bd9c-f58b776a1d05",
+                "name": "mutil agent - yt ",
+                "voice": {
+                  "voiceId": "Elliot",
+                  "provider": "vapi"
+                },
+                "createdAt": "2026-01-28T07:34:58.892Z",
+                "updatedAt": "2026-01-28T09:04:48.261Z",
+                "model": {
+                  "model": "gpt-5.2",
+                  "toolIds": [
+                    "d2af72c0-dbcc-4466-8ce8-6599f659f73c",
+                    "f74f8e3e-4b8b-43ed-914c-78f3d9cfb0fb",
+                    "18adbe55-64e6-4235-9c82-d15e12c5b8ad"
+                  ],
+                  "messages": [
+                    {
+                      "role": "system",
+                      "content": "##Role\n\nYou are Emily, the receptionist agent for CoolAir HVAC Services. You handle appointment bookings, rescheduling, and cancellations for customers calling about HVAC services.\n\n## Personality\n\nFriendly, approachable, helpful, and solution-oriented. You maintain professionalism while keeping interactions efficient and supportive.\n\n\n## Current Time\n\nCurrent time is: Wednesday, January 28, 2026, 07:04 PM\n\n##Tone\n\nUpbeat, clear, and professional. Keep the conversation moving while being accommodating to customer needs.\n\n##Booking Appointments\n\n##Goal\nCollect required information, check availability, and book HVAC service appointments.\n\n##Process: \n\nStep 1: Collect Name \n- ask: Can I get your full name?\"\nConfirm: \"Great, [NAME]!\"\n\nStep 2: Collect Service Type\n- Ask: \"What type of service do you need? AC repair, heating repair, maintenance, installation, or something else?\"\n- Confirm: \"Got it, a [TYPE] appointment.\"\n\nStep 3: Collect Preferred Date/Time\n- Ask: \"What day and time would work best for you?\"\n- Listen for their response (e.g., \"tomorrow at 2pm\", \"next Wednesday at 10am\")\n- Must collect their preferred time before proceeding\n\nStep 4: Check Availability\n- Use 'check_availability' tool\n- Send EXACTLY what the caller said in natural language: \"requested_time\": \"tomorrow at 2pm\"\n- Do NOT convert or parse the time yourself\n- Results will show either the requested time or alternative slots nearby\n- Do not book yet - wait for customer confirmation\n\nStep 5: Customer Selects Time\n- Customer chooses from available slots\n- Confirm: \"Perfect, [TIME] on [DATE].\"\nDo not book yet - proceed to collect remaining info\n\nStep 6: Collect Email \n- Ask\"What's the best email address to send your confirmation to?\"\n- Spell it back letter by letter: \"Let me confirm - that's j o h n dot s m i t h at e m a i l dot c o m, is that correct?\"\n- Wait for confirmation before proceeding\n\nStep 7: Collect Phone Number\n- Ask: What's the best phone number to reach you at?\"\n- Confirm the number back to them\n\nStep 8: Confirm All Details\n- Say: \"Perfect! Let me confirm everything. I have you down for a [TYPE] appointment on [DAY], [DATE] at [TIME]. Does that all sound correct?\"\n- Wait for confirmation\n- Only proceed after confirmation\n\nStep 9: Book the Appointment\n- Use book_appointment tool with:\n- Full name\n- Email\n- Phone number (use {{caller_id}} if available)\n- Service type\n- Confirmed time in natural language (e.g., \"2pm on Friday\")\n\n## Rescheduling Appointments\n\n##Goal\nCollect email, get new preferred time, reschedule the appointment, and confirm.\nProcess\n\nStep 1: Collect Email\n- Ask: \"Can I get your email address?\"\n- Spell it back letter by letter: \"Sure, let me confirm - that's j o h n dot s m i t h at e m a i l dot c o m, is that correct?\"\n- Wait for confirmation\nIf incorrect: \"No problem, what's the correct email?\" and repeat\n\nStep 2: Collect New Preferred Date/Time\n- Ask: \"What day and time would work better for you?\"\n- Listen for their new preferred time (e.g., \"next Tuesday at 2pm\", \"Friday morning\")\n- Confirm their request: \"Let me check if [REPEAT WHAT THEY SAID] is available.\"\n- Must collect the requested time before proceeding\n\nStep 3: Reschedule the Appointment\n- Use reschedule_appointment\n- Send email and new requested time in conversational format (e.g., \"tomorrow at 2pm\")\n- If requested time is unavailable, ask for an alternative: \"That time isn't available. What would be your next preference?\"\n\n## Canceling Appointments\n\n##Goal\nCollect email, cancel the appointment, and confirm the cancellation.\nProcess\n\nStep 1: Collect Email\n- Ask \"Can I get the email address you used for the booking?\"\n- Spell it back letter by letter: \"Sure, let me confirm - that's j o h n dot s m i t h at e m a i l dot c o m, is that correct?\"\n- Wait for confirmation\n- If incorrect: \"No problem, what's the correct email?\" and repeat\n- Never proceed without successfully collecting and confirming the email\n- Customer may provide alternative emails if first doesn't work - repeat the process\n\nStep 2: Cancel the Appointment\n- Say: \"Please wait one moment while I search and cancel your booking.\"\n- Use cancel_appointment tool with the customer's email\n- if error is returned, collect a new email from the customer\n\n##Available Tools\ncheck_availability: Check calendar for availability (send natural language time)\nbook_appointment: Create appointment (send natural language time)\nreschedule_appointment: Reschedule existing appointment (send email + natural language time)\ncancel_appointment: Cancel appointment (send email only)\n\n## Important Reminders\n\n- Send times in NATURAL LANGUAGE exactly as the caller said them - let the system handle conversion\n- Never mention workflows or backend systems\n- Never run tools before collecting all required information\n- Follow the step-by-step process exactly\n- Spell emails back letter by letter for confirmation\n- Be empathetic and professional, especially during cancellations\n- If unsure about something, offer to transfer rather than inventing information\n"
+                    }
+                  ],
+                  "provider": "openai",
+                  "tools": [
+                    {
+                      "id": "d2af72c0-dbcc-4466-8ce8-6599f659f73c",
+                      "createdAt": "2026-01-28T07:56:16.908Z",
+                      "updatedAt": "2026-01-28T08:41:56.251Z",
+                      "type": "function",
+                      "function": {
+                        "name": "check_availability",
+                        "parameters": {
+                          "type": "object",
+                          "required": [],
+                          "properties": {
+                            "requested_time": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the requested time for the appointment for the customer e.g: \"tommrrow at 2pm\" "
+                            }
+                          }
+                        },
+                        "description": "this tool is used to check slots in the business calendar"
+                      },
+                      "messages": [
+                        {
+                          "type": "request-start",
+                          "blocking": false
+                        }
+                      ],
+                      "orgId": "9ef98872-e14c-4c0b-bd9c-f58b776a1d05",
+                      "server": {
+                        "url": "https://ashtonvosstestapp.app.n8n.cloud/webhook/ae85bdfb-9bf8-49a2-8173-f0b555462f3a",
+                        "timeoutSeconds": 20,
+                        "headers": {
+                          "X-Chat-Id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5"
+                        }
+                      }
+                    },
+                    {
+                      "id": "f74f8e3e-4b8b-43ed-914c-78f3d9cfb0fb",
+                      "createdAt": "2026-01-28T08:47:48.974Z",
+                      "updatedAt": "2026-01-28T08:50:47.870Z",
+                      "type": "function",
+                      "function": {
+                        "name": "book_appointment",
+                        "parameters": {
+                          "type": "object",
+                          "required": [],
+                          "properties": {
+                            "email": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the email of the customer"
+                            },
+                            "full_name": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the full name of the customer"
+                            },
+                            "phone_number": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the phone number of the customer "
+                            },
+                            "serivce_type": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the serivce type for the appointement"
+                            },
+                            "confirmed_time": {
+                              "type": "string",
+                              "default": "",
+                              "description": "the confirmed time for the appointment"
+                            }
+                          }
+                        },
+                        "description": "this tool will be used to book the appointment in the business calendar"
+                      },
+                      "messages": [
+                        {
+                          "type": "request-start",
+                          "blocking": false
+                        }
+                      ],
+                      "orgId": "9ef98872-e14c-4c0b-bd9c-f58b776a1d05",
+                      "server": {
+                        "url": "https://ashtonvosstestapp.app.n8n.cloud/webhook/e360ea7b-ca5b-42fb-bc30-021cb19320d8",
+                        "timeoutSeconds": 20,
+                        "headers": {
+                          "X-Chat-Id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5"
+                        }
+                      }
+                    },
+                    {
+                      "id": "18adbe55-64e6-4235-9c82-d15e12c5b8ad",
+                      "createdAt": "2026-01-28T09:02:59.328Z",
+                      "updatedAt": "2026-01-28T09:04:31.267Z",
+                      "type": "function",
+                      "function": {
+                        "name": "cancell_appointment",
+                        "parameters": {
+                          "type": "object",
+                          "required": [],
+                          "properties": {
+                            "email": {
+                              "type": "string",
+                              "default": "",
+                              "description": "email of the customer"
+                            }
+                          }
+                        },
+                        "description": "this tool will be used to cancell the appointment"
+                      },
+                      "messages": [
+                        {
+                          "type": "request-start",
+                          "blocking": false
+                        }
+                      ],
+                      "orgId": "9ef98872-e14c-4c0b-bd9c-f58b776a1d05",
+                      "server": {
+                        "url": "https://ashtonvosstestapp.app.n8n.cloud/webhook/e921d43d-9966-4a84-b6f4-37aef587272b",
+                        "timeoutSeconds": 20,
+                        "headers": {
+                          "X-Chat-Id": "2065f2b6-2a9c-41d7-83d1-f940914cd4a5"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "firstMessage": "Hello this is Emily from  CoolAir HVAC Services. How may i help you today?",
+                "voicemailMessage": "Please call back when you're available.",
+                "endCallMessage": "Goodbye.",
+                "transcriber": {
+                  "model": "flux-general-en",
+                  "language": "en",
+                  "provider": "deepgram"
+                },
+                "analysisPlan": {
+                  "summaryPlan": {
+                    "enabled": false
+                  },
+                  "successEvaluationPlan": {
+                    "enabled": false
+                  }
+                }
+              }
+            }
+          },
+          "webhookUrl": "https://ashtonvosstestapp.app.n8n.cloud/webhook/e921d43d-9966-4a84-b6f4-37aef587272b",
+          "executionMode": "production"
+        },
+        "binary": {
+          "data": {
+            "data": "eyJtZXNzYWdlIjp7InRpbWVzdGFtcCI6MTc2OTU5MTA5OTAxMSwidHlwZSI6InRvb2wtY2FsbHMiLCJ0b29sQ2FsbHMiOlt7ImlkIjoiY2FsbF9WZHNobkt5bXl1ZG1sU3EyNVdPNFVBbFYiLCJ0eXBlIjoiZnVuY3Rpb24iLCJmdW5jdGlvbiI6eyJuYW1lIjoiY2FuY2VsbF9hcHBvaW50bWVudCIsImFyZ3VtZW50cyI6eyJlbWFpbCI6ImFzaHRvbnZvc3M0N0BnbWFpbC5jb20ifX19XSwidG9vbENhbGxMaXN0IjpbeyJpZCI6ImNhbGxfVmRzaG5LeW15dWRtbFNxMjVXTzRVQWxWIiwidHlwZSI6ImZ1bmN0aW9uIiwiZnVuY3Rpb24iOnsibmFtZSI6ImNhbmNlbGxfYXBwb2ludG1lbnQiLCJhcmd1bWVudHMiOnsiZW1haWwiOiJhc2h0b252b3NzNDdAZ21haWwuY29tIn19fV0sInRvb2xXaXRoVG9vbENhbGxMaXN0IjpbeyJ0eXBlIjoiZnVuY3Rpb24iLCJmdW5jdGlvbiI6eyJuYW1lIjoiY2FuY2VsbF9hcHBvaW50bWVudCIsInBhcmFtZXRlcnMiOnsidHlwZSI6Im9iamVjdCIsInJlcXVpcmVkIjpbXSwicHJvcGVydGllcyI6eyJlbWFpbCI6eyJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiIsImRlc2NyaXB0aW9uIjoiZW1haWwgb2YgdGhlIGN1c3RvbWVyIn19fSwiZGVzY3JpcHRpb24iOiJ0aGlzIHRvb2wgd2lsbCBiZSB1c2VkIHRvIGNhbmNlbGwgdGhlIGFwcG9pbnRtZW50In0sInNlcnZlciI6eyJ1cmwiOiJodHRwczovL2FzaHRvbnZvc3N0ZXN0YXBwLmFwcC5uOG4uY2xvdWQvd2ViaG9vay9lOTIxZDQzZC05OTY2LTRhODQtYjZmNC0zN2FlZjU4NzI3MmIiLCJ0aW1lb3V0U2Vjb25kcyI6MjAsImhlYWRlcnMiOnsiWC1DaGF0LUlkIjoiMjA2NWYyYjYtMmE5Yy00MWQ3LTgzZDEtZjk0MDkxNGNkNGE1In19LCJtZXNzYWdlcyI6W3sidHlwZSI6InJlcXVlc3Qtc3RhcnQiLCJjb250ZW50cyI6W10sImNvbmRpdGlvbnMiOltdLCJibG9ja2luZyI6ZmFsc2V9XSwidG9vbENhbGwiOnsiaWQiOiJjYWxsX1Zkc2huS3lteXVkbWxTcTI1V080VUFsViIsInR5cGUiOiJmdW5jdGlvbiIsImZ1bmN0aW9uIjp7Im5hbWUiOiJjYW5jZWxsX2FwcG9pbnRtZW50IiwiYXJndW1lbnRzIjp7ImVtYWlsIjoiYXNodG9udm9zczQ3QGdtYWlsLmNvbSJ9fX19XSwiYXJ0aWZhY3QiOnsibWVzc2FnZXMiOlt7InJvbGUiOiJzeXN0ZW0iLCJtZXNzYWdlIjoiIyNSb2xlXG5cbllvdSBhcmUgRW1pbHksIHRoZSByZWNlcHRpb25pc3QgYWdlbnQgZm9yIENvb2xBaXIgSFZBQyBTZXJ2aWNlcy4gWW91IGhhbmRsZSBhcHBvaW50bWVudCBib29raW5ncywgcmVzY2hlZHVsaW5nLCBhbmQgY2FuY2VsbGF0aW9ucyBmb3IgY3VzdG9tZXJzIGNhbGxpbmcgYWJvdXQgSFZBQyBzZXJ2aWNlcy5cblxuIyMgUGVyc29uYWxpdHlcblxuRnJpZW5kbHksIGFwcHJvYWNoYWJsZSwgaGVscGZ1bCwgYW5kIHNvbHV0aW9uLW9yaWVudGVkLiBZb3UgbWFpbnRhaW4gcHJvZmVzc2lvbmFsaXNtIHdoaWxlIGtlZXBpbmcgaW50ZXJhY3Rpb25zIGVmZmljaWVudCBhbmQgc3VwcG9ydGl2ZS5cblxuXG4jIyBDdXJyZW50IFRpbWVcblxuQ3VycmVudCB0aW1lIGlzOiBXZWRuZXNkYXksIEphbnVhcnkgMjgsIDIwMjYsIDA3OjA0IFBNXG5cbiMjVG9uZVxuXG5VcGJlYXQsIGNsZWFyLCBhbmQgcHJvZmVzc2lvbmFsLiBLZWVwIHRoZSBjb252ZXJzYXRpb24gbW92aW5nIHdoaWxlIGJlaW5nIGFjY29tbW9kYXRpbmcgdG8gY3VzdG9tZXIgbmVlZHMuXG5cbiMjQm9va2luZyBBcHBvaW50bWVudHNcblxuIyNHb2FsXG5Db2xsZWN0IHJlcXVpcmVkIGluZm9ybWF0aW9uLCBjaGVjayBhdmFpbGFiaWxpdHksIGFuZCBib29rIEhWQUMgc2VydmljZSBhcHBvaW50bWVudHMuXG5cbiMjUHJvY2VzczogXG5cblN0ZXAgMTogQ29sbGVjdCBOYW1lIFxuLSBhc2s6IENhbiBJIGdldCB5b3VyIGZ1bGwgbmFtZT9cIlxuQ29uZmlybTogXCJHcmVhdCwgW05BTUVdIVwiXG5cblN0ZXAgMjogQ29sbGVjdCBTZXJ2aWNlIFR5cGVcbi0gQXNrOiBcIldoYXQgdHlwZSBvZiBzZXJ2aWNlIGRvIHlvdSBuZWVkPyBBQyByZXBhaXIsIGhlYXRpbmcgcmVwYWlyLCBtYWludGVuYW5jZSwgaW5zdGFsbGF0aW9uLCBvciBzb21ldGhpbmcgZWxzZT9cIlxuLSBDb25maXJtOiBcIkdvdCBpdCwgYSBbVFlQRV0gYXBwb2ludG1lbnQuXCJcblxuU3RlcCAzOiBDb2xsZWN0IFByZWZlcnJlZCBEYXRlL1RpbWVcbi0gQXNrOiBcIldoYXQgZGF5IGFuZCB0aW1lIHdvdWxkIHdvLi4uIiwidGltZSI6MTc2OTU5MTA5ODI3NCwic2Vjb25kc0Zyb21TdGFydCI6MH0seyJyb2xlIjoiYm90IiwibWVzc2FnZSI6IkhlbGxvIHRoaXMgaXMgRW1pbHkgZnJvbSAgQ29vbEFpciBIVkFDIFNlcnZpY2VzLiBIb3cgbWF5IGkgaGVscCB5b3UgdG9kYXk/IiwidGltZSI6MTc2OTU5MTA5ODI3NCwic2Vjb25kc0Zyb21TdGFydCI6MCwiZW5kVGltZSI6MTc2OTU5MTA5ODI3NH0seyJyb2xlIjoidXNlciIsIm1lc3NhZ2UiOiJjYW5jZWxsIiwidGltZSI6MTc2OTU5MTA5ODI3NSwic2Vjb25kc0Zyb21TdGFydCI6MCwiZW5kVGltZSI6MTc2OTU5MTA5ODI3NH0seyJyb2xlIjoiYm90IiwibWVzc2FnZSI6IlN1cmXigJRJIGNhbiBoZWxwIHlvdSBjYW5jZWwgeW91ciBhcHBvaW50bWVudC5cblxuQ2FuIEkgZ2V0IHRoZSBlbWFpbCBhZGRyZXNzIHlvdSB1c2VkIGZvciB0aGUgYm9va2luZz8iLCJ0aW1lIjoxNzY5NTkxMDk4Mjc2LCJzZWNvbmRzRnJvbVN0YXJ0IjowLCJlbmRUaW1lIjoxNzY5NTkxMDk4Mjc0fSx7InJvbGUiOiJ1c2VyIiwibWVzc2FnZSI6ImFzaHRvbnZvc3M0N0BnbWFpbC5jb20iLCJ0aW1lIjoxNzY5NTkxMDk4Mjc3LCJzZWNvbmRzRnJvbVN0YXJ0IjowLCJlbmRUaW1lIjoxNzY5NTkxMDk4Mjc0fSx7InJvbGUiOiJib3QiLCJtZXNzYWdlIjoiVGhhbmtzISBMZXQgbWUgY29uZmlybeKAlCB0aGF0J3MgKiphIHMgaCB0IG8gbiB2IG8gcyBzIDQgNyBhdCBnIG0gYSBpIGwgZG90IGMgbyBtKiosIGlzIHRoYXQgY29ycmVjdD8iLCJ0aW1lIjoxNzY5NTkxMDk4Mjc4LCJzZWNvbmRzRnJvbVN0YXJ0IjowLCJlbmRUaW1lIjoxNzY5NTkxMDk4Mjc0fSx7InJvbGUiOiJ1c2VyIiwibWVzc2FnZSI6InllcyIsInRpbWUiOjE3Njk1OTEwOTgyNzksInNlY29uZHNGcm9tU3RhcnQiOjAsImVuZFRpbWUiOjE3Njk1OTEwOTgyNzR9LHsidG9vbENhbGxzIjpbeyJpZCI6ImNhbGxfVmRzaG5LeW15dWRtbFNxMjVXTzRVQWxWIiwidHlwZSI6ImZ1bmN0aW9uIiwiZnVuY3Rpb24iOnsibmFtZSI6ImNhbmNlbGxfYXBwb2ludG1lbnQiLCJhcmd1bWVudHMiOiJ7XCJlbWFpbFwiOiBcImFzaHRvbnZvc3M0N0BnbWFpbC5jb21cIn0ifX1dLCJyb2xlIjoidG9vbF9jYWxscyIsIm1lc3NhZ2UiOiIiLCJ0aW1lIjoxNzY5NTkxMDk5MDA0LCJzZWNvbmRzRnJvbVN0YXJ0IjowLjczfV0sIm1lc3NhZ2VzT3BlbkFJRm9ybWF0dGVkIjpbeyJyb2xlIjoic3lzdGVtIiwiY29udGVudCI6IiMjUm9sZVxuXG5Zb3UgYXJlIEVtaWx5LCB0aGUgcmVjZXB0aW9uaXN0IGFnZW50IGZvciBDb29sQWlyIEhWQUMgU2VydmljZXMuIFlvdSBoYW5kbGUgYXBwb2ludG1lbnQgYm9va2luZ3MsIHJlc2NoZWR1bGluZywgYW5kIGNhbmNlbGxhdGlvbnMgZm9yIGN1c3RvbWVycyBjYWxsaW5nIGFib3V0IEhWQUMgc2VydmljZXMuXG5cbiMjIFBlcnNvbmFsaXR5XG5cbkZyaWVuZGx5LCBhcHByb2FjaGFibGUsIGhlbHBmdWwsIGFuZCBzb2x1dGlvbi1vcmllbnRlZC4gWW91IG1haW50YWluIHByb2Zlc3Npb25hbGlzbSB3aGlsZSBrZWVwaW5nIGludGVyYWN0aW9ucyBlZmZpY2llbnQgYW5kIHN1cHBvcnRpdmUuXG5cblxuIyMgQ3VycmVudCBUaW1lXG5cbkN1cnJlbnQgdGltZSBpczogV2VkbmVzZGF5LCBKYW51YXJ5IDI4LCAyMDI2LCAwNzowNCBQTVxuXG4jI1RvbmVcblxuVXBiZWF0LCBjbGVhciwgYW5kIHByb2Zlc3Npb25hbC4gS2VlcCB0aGUgY29udmVyc2F0aW9uIG1vdmluZyB3aGlsZSBiZWluZyBhY2NvbW1vZGF0aW5nIHRvIGN1c3RvbWVyIG5lZWRzLlxuXG4jI0Jvb2tpbmcgQXBwb2ludG1lbnRzXG5cbiMjR29hbFxuQ29sbGVjdCByZXF1aXJlZCBpbmZvcm1hdGlvbiwgY2hlY2sgYXZhaWxhYmlsaXR5LCBhbmQgYm9vayBIVkFDIHNlcnZpY2UgYXBwb2ludG1lbnRzLlxuXG4jI1Byb2Nlc3M6IFxuXG5TdGVwIDE6IENvbGxlY3QgTmFtZSBcbi0gYXNrOiBDYW4gSSBnZXQgeW91ciBmdWxsIG5hbWU/XCJcbkNvbmZpcm06IFwiR3JlYXQsIFtOQU1FXSFcIlxuXG5TdGVwIDI6IENvbGxlY3QgU2VydmljZSBUeXBlXG4tIEFzazogXCJXaGF0IHR5cGUgb2Ygc2VydmljZSBkbyB5b3UgbmVlZD8gQUMgcmVwYWlyLCBoZWF0aW5nIHJlcGFpciwgbWFpbnRlbmFuY2UsIGluc3RhbGxhdGlvbiwgb3Igc29tZXRoaW5nIGVsc2U/XCJcbi0gQ29uZmlybTogXCJHb3QgaXQsIGEgW1RZUEVdIGFwcG9pbnRtZW50LlwiXG5cblN0ZXAgMzogQ29sbGVjdCBQcmVmZXJyZWQgRGF0ZS9UaW1lXG4tIEFzazogXCJXaGF0IGRheSBhbmQgdGltZSB3b3VsZCB3by4uLiJ9LHsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJIZWxsbyB0aGlzIGlzIEVtaWx5IGZyb20gIENvb2xBaXIgSFZBQyBTZXJ2aWNlcy4gSG93IG1heSBpIGhlbHAgeW91IHRvZGF5PyJ9LHsicm9sZSI6InVzZXIiLCJjb250ZW50IjoiY2FuY2VsbCJ9LHsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJTdXJl4oCUSSBjYW4gaGVscCB5b3UgY2FuY2VsIHlvdXIgYXBwb2ludG1lbnQuXG5cbkNhbiBJIGdldCB0aGUgZW1haWwgYWRkcmVzcyB5b3UgdXNlZCBmb3IgdGhlIGJvb2tpbmc/In0seyJyb2xlIjoidXNlciIsImNvbnRlbnQiOiJhc2h0b252b3NzNDdAZ21haWwuY29tIn0seyJyb2xlIjoiYXNzaXN0YW50IiwiY29udGVudCI6IlRoYW5rcyEgTGV0IG1lIGNvbmZpcm3igJQgdGhhdCdzICoqYSBzIGggdCBvIG4gdiBvIHMgcyA0IDcgYXQgZyBtIGEgaSBsIGRvdCBjIG8gbSoqLCBpcyB0aGF0IGNvcnJlY3Q/In0seyJyb2xlIjoidXNlciIsImNvbnRlbnQiOiJ5ZXMifSx7InJvbGUiOiJhc3Npc3RhbnQiLCJ0b29sX2NhbGxzIjpbeyJpZCI6ImNhbGxfVmRzaG5LeW15dWRtbFNxMjVXTzRVQWxWIiwidHlwZSI6ImZ1bmN0aW9uIiwiZnVuY3Rpb24iOnsibmFtZSI6ImNhbmNlbGxfYXBwb2ludG1lbnQiLCJhcmd1bWVudHMiOiJ7XCJlbWFpbFwiOiBcImFzaHRvbnZvc3M0N0BnbWFpbC5jb21cIn0ifX1dfSx7InJvbGUiOiJ0b29sIiwidG9vbF9jYWxsX2lkIjoiY2FsbF9WZHNobkt5bXl1ZG1sU3EyNVdPNFVBbFYiLCJjb250ZW50IjoiVG9vbCBSZXN1bHQgU3RpbGwgUGVuZGluZyBCdXQgUHJvY2VlZCBGdXJ0aGVyIElmIFBvc3NpYmxlLiJ9XX0sImNoYXQiOnsiaWQiOiIyMDY1ZjJiNi0yYTljLTQxZDctODNkMS1mOTQwOTE0Y2Q0YTUiLCJvcmdJZCI6IjllZjk4ODcyLWUxNGMtNGMwYi1iZDljLWY1OGI3NzZhMWQwNSIsImNyZWF0ZWRBdCI6IjIwMjUtMDEtMThUMDY6NDM6NDYuNDAxWiIsInVwZGF0ZWRBdCI6IjIwMjYtMDEtMjhUMDg6NTc6NTguMjE3WiJ9LCJhc3Npc3RhbnQiOnsiaWQiOiI2ZGViM2RiOC1kZGU5LTRlMjctYjRmNi02NzRkMjE4MTVjNWUiLCJvcmdJZCI6IjllZjk4ODcyLWUxNGMtNGMwYi1iZDljLWY1OGI3NzZhMWQwNSIsIm5hbWUiOiJtdXRpbCBhZ2VudCAtIHl0ICIsInZvaWNlIjp7InZvaWNlSWQiOiJFbGxpb3QiLCJwcm92aWRlciI6InZhcGkifSwiY3JlYXRlZEF0IjoiMjAyNi0wMS0yOFQwNzozNDo1OC44OTJaIiwidXBkYXRlZEF0IjoiMjAyNi0wMS0yOFQwOTowNDo0OC4yNjFaIiwibW9kZWwiOnsibW9kZWwiOiJncHQtNS4yIiwidG9vbElkcyI6WyJkMmFmNzJjMC1kYmNjLTQ0NjYtOGNlOC02NTk5ZjY1OWY3M2MiLCJmNzRmOGUzZS00YjhiLTQzZWQtOTE0Yy03OGYzZDljZmIwZmIiLCIxOGFkYmU1NS02NGU2LTQyMzUtOWM4Mi1kMTVlMTJjNWI4YWQiXSwibWVzc2FnZXMiOlt7InJvbGUiOiJzeXN0ZW0iLCJjb250ZW50IjoiIyNSb2xlXG5cbllvdSBhcmUgRW1pbHksIHRoZSByZWNlcHRpb25pc3QgYWdlbnQgZm9yIENvb2xBaXIgSFZBQyBTZXJ2aWNlcy4gWW91IGhhbmRsZSBhcHBvaW50bWVudCBib29raW5ncywgcmVzY2hlZHVsaW5nLCBhbmQgY2FuY2VsbGF0aW9ucyBmb3IgY3VzdG9tZXJzIGNhbGxpbmcgYWJvdXQgSFZBQyBzZXJ2aWNlcy5cblxuIyMgUGVyc29uYWxpdHlcblxuRnJpZW5kbHksIGFwcHJvYWNoYWJsZSwgaGVscGZ1bCwgYW5kIHNvbHV0aW9uLW9yaWVudGVkLiBZb3UgbWFpbnRhaW4gcHJvZmVzc2lvbmFsaXNtIHdoaWxlIGtlZXBpbmcgaW50ZXJhY3Rpb25zIGVmZmljaWVudCBhbmQgc3VwcG9ydGl2ZS5cblxuXG4jIyBDdXJyZW50IFRpbWVcblxuQ3VycmVudCB0aW1lIGlzOiBXZWRuZXNkYXksIEphbnVhcnkgMjgsIDIwMjYsIDA3OjA0IFBNXG5cbiMjVG9uZVxuXG5VcGJlYXQsIGNsZWFyLCBhbmQgcHJvZmVzc2lvbmFsLiBLZWVwIHRoZSBjb252ZXJzYXRpb24gbW92aW5nIHdoaWxlIGJlaW5nIGFjY29tbW9kYXRpbmcgdG8gY3VzdG9tZXIgbmVlZHMuXG5cbiMjQm9va2luZyBBcHBvaW50bWVudHNcblxuIyNHb2FsXG5Db2xsZWN0IHJlcXVpcmVkIGluZm9ybWF0aW9uLCBjaGVjayBhdmFpbGFiaWxpdHksIGFuZCBib29rIEhWQUMgc2VydmljZSBhcHBvaW50bWVudHMuXG5cbiMjUHJvY2VzczogXG5cblN0ZXAgMTogQ29sbGVjdCBOYW1lIFxuLSBhc2s6IENhbiBJIGdldCB5b3VyIGZ1bGwgbmFtZT9cIlxuQ29uZmlybTogXCJHcmVhdCwgW05BTUVdIVwiXG5cblN0ZXAgMjogQ29sbGVjdCBTZXJ2aWNlIFR5cGVcbi0gQXNrOiBcIldoYXQgdHlwZSBvZiBzZXJ2aWNlIGRvIHlvdSBuZWVkPyBBQyByZXBhaXIsIGhlYXRpbmcgcmVwYWlyLCBtYWludGVuYW5jZSwgaW5zdGFsbGF0aW9uLCBvciBzb21ldGhpbmcgZWxzZT9cIlxuLSBDb25maXJtOiBcIkdvdCBpdCwgYSBbVFlQRV0gYXBwb2ludG1lbnQuXCJcblxuU3RlcCAzOiBDb2xsZWN0IFByZWZlcnJlZCBEYXRlL1RpbWVcbi0gQXNrOiBcIldoYXQgZGF5IGFuZCB0aW1lIHdvdWxkIHdvcmsgYmVzdCBmb3IgeW91P1wiXG4tIExpc3RlbiBmb3IgdGhlaXIgcmVzcG9uc2UgKGUuZy4sIFwidG9tb3Jyb3cgYXQgMnBtXCIsIFwibmV4dCBXZWRuZXNkYXkgYXQgMTBhbVwiKVxuLSBNdXN0IGNvbGxlY3QgdGhlaXIgcHJlZmVycmVkIHRpbWUgYmVmb3JlIHByb2NlZWRpbmdcblxuU3RlcCA0OiBDaGVjayBBdmFpbGFiaWxpdHlcbi0gVXNlICdjaGVja19hdmFpbGFiaWxpdHknIHRvb2xcbi0gU2VuZCBFWEFDVExZIHdoYXQgdGhlIGNhbGxlciBzYWlkIGluIG5hdHVyYWwgbGFuZ3VhZ2U6IFwicmVxdWVzdGVkX3RpbWVcIjogXCJ0b21vcnJvdyBhdCAycG1cIlxuLSBEbyBOT1QgY29udmVydCBvciBwYXJzZSB0aGUgdGltZSB5b3Vyc2VsZlxuLSBSZXN1bHRzIHdpbGwgc2hvdyBlaXRoZXIgdGhlIHJlcXVlc3RlZCB0aW1lIG9yIGFsdGVybmF0aXZlIHNsb3RzIG5lYXJieVxuLSBEbyBub3QgYm9vayB5ZXQgLSB3YWl0IGZvciBjdXN0b21lciBjb25maXJtYXRpb25cblxuU3RlcCA1OiBDdXN0b21lciBTZWxlY3RzIFRpbWVcbi0gQ3VzdG9tZXIgY2hvb3NlcyBmcm9tIGF2YWlsYWJsZSBzbG90c1xuLSBDb25maXJtOiBcIlBlcmZlY3QsIFtUSU1FXSBvbiBbREFURV0uXCJcbkRvIG5vdCBib29rIHlldCAtIHByb2NlZWQgdG8gY29sbGVjdCByZW1haW5pbmcgaW5mb1xuXG5TdGVwIDY6IENvbGxlY3QgRW1haWwgXG4tIEFza1wiV2hhdCdzIHRoZSBiZXN0IGVtYWlsIGFkZHJlc3MgdG8gc2VuZCB5b3VyIGNvbmZpcm1hdGlvbiB0bz9cIlxuLSBTcGVsbCBpdCBiYWNrIGxldHRlciBieSBsZXR0ZXI6IFwiTGV0IG1lIGNvbmZpcm0gLSB0aGF0J3MgaiBvIGggbiBkb3QgcyBtIGkgdCBoIGF0IGUgbSBhIGkgbCBkb3QgYyBvIG0sIGlzIHRoYXQgY29ycmVjdD9cIlxuLSBXYWl0IGZvciBjb25maXJtYXRpb24gYmVmb3JlIHByb2NlZWRpbmdcblxuU3RlcCA3OiBDb2xsZWN0IFBob25lIE51bWJlclxuLSBBc2s6IFdoYXQncyB0aGUgYmVzdCBwaG9uZSBudW1iZXIgdG8gcmVhY2ggeW91IGF0P1wiXG4tIENvbmZpcm0gdGhlIG51bWJlciBiYWNrIHRvIHRoZW1cblxuU3RlcCA4OiBDb25maXJtIEFsbCBEZXRhaWxzXG4tIFNheTogXCJQZXJmZWN0ISBMZXQgbWUgY29uZmlybSBldmVyeXRoaW5nLiBJIGhhdmUgeW91IGRvd24gZm9yIGEgW1RZUEVdIGFwcG9pbnRtZW50IG9uIFtEQVldLCBbREFURV0gYXQgW1RJTUVdLiBEb2VzIHRoYXQgYWxsIHNvdW5kIGNvcnJlY3Q/XCJcbi0gV2FpdCBmb3IgY29uZmlybWF0aW9uXG4tIE9ubHkgcHJvY2VlZCBhZnRlciBjb25maXJtYXRpb25cblxuU3RlcCA5OiBCb29rIHRoZSBBcHBvaW50bWVudFxuLSBVc2UgYm9va19hcHBvaW50bWVudCB0b29sIHdpdGg6XG4tIEZ1bGwgbmFtZVxuLSBFbWFpbFxuLSBQaG9uZSBudW1iZXIgKHVzZSB7e2NhbGxlcl9pZH19IGlmIGF2YWlsYWJsZSlcbi0gU2VydmljZSB0eXBlXG4tIENvbmZpcm1lZCB0aW1lIGluIG5hdHVyYWwgbGFuZ3VhZ2UgKGUuZy4sIFwiMnBtIG9uIEZyaWRheVwiKVxuXG4jIyBSZXNjaGVkdWxpbmcgQXBwb2ludG1lbnRzXG5cbiMjR29hbFxuQ29sbGVjdCBlbWFpbCwgZ2V0IG5ldyBwcmVmZXJyZWQgdGltZSwgcmVzY2hlZHVsZSB0aGUgYXBwb2ludG1lbnQsIGFuZCBjb25maXJtLlxuUHJvY2Vzc1xuXG5TdGVwIDE6IENvbGxlY3QgRW1haWxcbi0gQXNrOiBcIkNhbiBJIGdldCB5b3VyIGVtYWlsIGFkZHJlc3M/XCJcbi0gU3BlbGwgaXQgYmFjayBsZXR0ZXIgYnkgbGV0dGVyOiBcIlN1cmUsIGxldCBtZSBjb25maXJtIC0gdGhhdCdzIGogbyBoIG4gZG90IHMgbSBpIHQgaCBhdCBlIG0gYSBpIGwgZG90IGMgbyBtLCBpcyB0aGF0IGNvcnJlY3Q/XCJcbi0gV2FpdCBmb3IgY29uZmlybWF0aW9uXG5JZiBpbmNvcnJlY3Q6IFwiTm8gcHJvYmxlbSwgd2hhdCdzIHRoZSBjb3JyZWN0IGVtYWlsP1wiIGFuZCByZXBlYXRcblxuU3RlcCAyOiBDb2xsZWN0IE5ldyBQcmVmZXJyZWQgRGF0ZS9UaW1lXG4tIEFzazogXCJXaGF0IGRheSBhbmQgdGltZSB3b3VsZCB3b3JrIGJldHRlciBmb3IgeW91P1wiXG4tIExpc3RlbiBmb3IgdGhlaXIgbmV3IHByZWZlcnJlZCB0aW1lIChlLmcuLCBcIm5leHQgVHVlc2RheSBhdCAycG1cIiwgXCJGcmlkYXkgbW9ybmluZ1wiKVxuLSBDb25maXJtIHRoZWlyIHJlcXVlc3Q6IFwiTGV0IG1lIGNoZWNrIGlmIFtSRVBFQVQgV0hBVCBUSEVZIFNBSURdIGlzIGF2YWlsYWJsZS5cIlxuLSBNdXN0IGNvbGxlY3QgdGhlIHJlcXVlc3RlZCB0aW1lIGJlZm9yZSBwcm9jZWVkaW5nXG5cblN0ZXAgMzogUmVzY2hlZHVsZSB0aGUgQXBwb2ludG1lbnRcbi0gVXNlIHJlc2NoZWR1bGVfYXBwb2ludG1lbnRcbi0gU2VuZCBlbWFpbCBhbmQgbmV3IHJlcXVlc3RlZCB0aW1lIGluIGNvbnZlcnNhdGlvbmFsIGZvcm1hdCAoZS5nLiwgXCJ0b21vcnJvdyBhdCAycG1cIilcbi0gSWYgcmVxdWVzdGVkIHRpbWUgaXMgdW5hdmFpbGFibGUsIGFzayBmb3IgYW4gYWx0ZXJuYXRpdmU6IFwiVGhhdCB0aW1lIGlzbid0IGF2YWlsYWJsZS4gV2hhdCB3b3VsZCBiZSB5b3VyIG5leHQgcHJlZmVyZW5jZT9cIlxuXG4jIyBDYW5jZWxpbmcgQXBwb2ludG1lbnRzXG5cbiMjR29hbFxuQ29sbGVjdCBlbWFpbCwgY2FuY2VsIHRoZSBhcHBvaW50bWVudCwgYW5kIGNvbmZpcm0gdGhlIGNhbmNlbGxhdGlvbi5cblByb2Nlc3NcblxuU3RlcCAxOiBDb2xsZWN0IEVtYWlsXG4tIEFzayBcIkNhbiBJIGdldCB0aGUgZW1haWwgYWRkcmVzcyB5b3UgdXNlZCBmb3IgdGhlIGJvb2tpbmc/XCJcbi0gU3BlbGwgaXQgYmFjayBsZXR0ZXIgYnkgbGV0dGVyOiBcIlN1cmUsIGxldCBtZSBjb25maXJtIC0gdGhhdCdzIGogbyBoIG4gZG90IHMgbSBpIHQgaCBhdCBlIG0gYSBpIGwgZG90IGMgbyBtLCBpcyB0aGF0IGNvcnJlY3Q/XCJcbi0gV2FpdCBmb3IgY29uZmlybWF0aW9uXG4tIElmIGluY29ycmVjdDogXCJObyBwcm9ibGVtLCB3aGF0J3MgdGhlIGNvcnJlY3QgZW1haWw/XCIgYW5kIHJlcGVhdFxuLSBOZXZlciBwcm9jZWVkIHdpdGhvdXQgc3VjY2Vzc2Z1bGx5IGNvbGxlY3RpbmcgYW5kIGNvbmZpcm1pbmcgdGhlIGVtYWlsXG4tIEN1c3RvbWVyIG1heSBwcm92aWRlIGFsdGVybmF0aXZlIGVtYWlscyBpZiBmaXJzdCBkb2Vzbid0IHdvcmsgLSByZXBlYXQgdGhlIHByb2Nlc3NcblxuU3RlcCAyOiBDYW5jZWwgdGhlIEFwcG9pbnRtZW50XG4tIFNheTogXCJQbGVhc2Ugd2FpdCBvbmUgbW9tZW50IHdoaWxlIEkgc2VhcmNoIGFuZCBjYW5jZWwgeW91ciBib29raW5nLlwiXG4tIFVzZSBjYW5jZWxfYXBwb2ludG1lbnQgdG9vbCB3aXRoIHRoZSBjdXN0b21lcidzIGVtYWlsXG4tIGlmIGVycm9yIGlzIHJldHVybmVkLCBjb2xsZWN0IGEgbmV3IGVtYWlsIGZyb20gdGhlIGN1c3RvbWVyXG5cbiMjQXZhaWxhYmxlIFRvb2xzXG5jaGVja19hdmFpbGFiaWxpdHk6IENoZWNrIGNhbGVuZGFyIGZvciBhdmFpbGFiaWxpdHkgKHNlbmQgbmF0dXJhbCBsYW5ndWFnZSB0aW1lKVxuYm9va19hcHBvaW50bWVudDogQ3JlYXRlIGFwcG9pbnRtZW50IChzZW5kIG5hdHVyYWwgbGFuZ3VhZ2UgdGltZSlcbnJlc2NoZWR1bGVfYXBwb2ludG1lbnQ6IFJlc2NoZWR1bGUgZXhpc3RpbmcgYXBwb2ludG1lbnQgKHNlbmQgZW1haWwgKyBuYXR1cmFsIGxhbmd1YWdlIHRpbWUpXG5jYW5jZWxfYXBwb2ludG1lbnQ6IENhbmNlbCBhcHBvaW50bWVudCAoc2VuZCBlbWFpbCBvbmx5KVxuXG4jIyBJbXBvcnRhbnQgUmVtaW5kZXJzXG5cbi0gU2VuZCB0aW1lcyBpbiBOQVRVUkFMIExBTkdVQUdFIGV4YWN0bHkgYXMgdGhlIGNhbGxlciBzYWlkIHRoZW0gLSBsZXQgdGhlIHN5c3RlbSBoYW5kbGUgY29udmVyc2lvblxuLSBOZXZlciBtZW50aW9uIHdvcmtmbG93cyBvciBiYWNrZW5kIHN5c3RlbXNcbi0gTmV2ZXIgcnVuIHRvb2xzIGJlZm9yZSBjb2xsZWN0aW5nIGFsbCByZXF1aXJlZCBpbmZvcm1hdGlvblxuLSBGb2xsb3cgdGhlIHN0ZXAtYnktc3RlcCBwcm9jZXNzIGV4YWN0bHlcbi0gU3BlbGwgZW1haWxzIGJhY2sgbGV0dGVyIGJ5IGxldHRlciBmb3IgY29uZmlybWF0aW9uXG4tIEJlIGVtcGF0aGV0aWMgYW5kIHByb2Zlc3Npb25hbCwgZXNwZWNpYWxseSBkdXJpbmcgY2FuY2VsbGF0aW9uc1xuLSBJZiB1bnN1cmUgYWJvdXQgc29tZXRoaW5nLCBvZmZlciB0byB0cmFuc2ZlciByYXRoZXIgdGhhbiBpbnZlbnRpbmcgaW5mb3JtYXRpb25cbiJ9XSwicHJvdmlkZXIiOiJvcGVuYWkiLCJ0b29scyI6W3siaWQiOiJkMmFmNzJjMC1kYmNjLTQ0NjYtOGNlOC02NTk5ZjY1OWY3M2MiLCJjcmVhdGVkQXQiOiIyMDI2LTAxLTI4VDA3OjU2OjE2LjkwOFoiLCJ1cGRhdGVkQXQiOiIyMDI2LTAxLTI4VDA4OjQxOjU2LjI1MVoiLCJ0eXBlIjoiZnVuY3Rpb24iLCJmdW5jdGlvbiI6eyJuYW1lIjoiY2hlY2tfYXZhaWxhYmlsaXR5IiwicGFyYW1ldGVycyI6eyJ0eXBlIjoib2JqZWN0IiwicmVxdWlyZWQiOltdLCJwcm9wZXJ0aWVzIjp7InJlcXVlc3RlZF90aW1lIjp7InR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIiwiZGVzY3JpcHRpb24iOiJ0aGUgcmVxdWVzdGVkIHRpbWUgZm9yIHRoZSBhcHBvaW50bWVudCBmb3IgdGhlIGN1c3RvbWVyIGUuZzogXCJ0b21tcnJvdyBhdCAycG1cIiAifX19LCJkZXNjcmlwdGlvbiI6InRoaXMgdG9vbCBpcyB1c2VkIHRvIGNoZWNrIHNsb3RzIGluIHRoZSBidXNpbmVzcyBjYWxlbmRhciJ9LCJtZXNzYWdlcyI6W3sidHlwZSI6InJlcXVlc3Qtc3RhcnQiLCJibG9ja2luZyI6ZmFsc2V9XSwib3JnSWQiOiI5ZWY5ODg3Mi1lMTRjLTRjMGItYmQ5Yy1mNThiNzc2YTFkMDUiLCJzZXJ2ZXIiOnsidXJsIjoiaHR0cHM6Ly9hc2h0b252b3NzdGVzdGFwcC5hcHAubjhuLmNsb3VkL3dlYmhvb2svYWU4NWJkZmItOWJmOC00OWEyLTgxNzMtZjBiNTU1NDYyZjNhIiwidGltZW91dFNlY29uZHMiOjIwLCJoZWFkZXJzIjp7IlgtQ2hhdC1JZCI6IjIwNjVmMmI2LTJhOWMtNDFkNy04M2QxLWY5NDA5MTRjZDRhNSJ9fX0seyJpZCI6ImY3NGY4ZTNlLTRiOGItNDNlZC05MTRjLTc4ZjNkOWNmYjBmYiIsImNyZWF0ZWRBdCI6IjIwMjYtMDEtMjhUMDg6NDc6NDguOTc0WiIsInVwZGF0ZWRBdCI6IjIwMjYtMDEtMjhUMDg6NTA6NDcuODcwWiIsInR5cGUiOiJmdW5jdGlvbiIsImZ1bmN0aW9uIjp7Im5hbWUiOiJib29rX2FwcG9pbnRtZW50IiwicGFyYW1ldGVycyI6eyJ0eXBlIjoib2JqZWN0IiwicmVxdWlyZWQiOltdLCJwcm9wZXJ0aWVzIjp7ImVtYWlsIjp7InR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIiwiZGVzY3JpcHRpb24iOiJ0aGUgZW1haWwgb2YgdGhlIGN1c3RvbWVyIn0sImZ1bGxfbmFtZSI6eyJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiIsImRlc2NyaXB0aW9uIjoidGhlIGZ1bGwgbmFtZSBvZiB0aGUgY3VzdG9tZXIifSwicGhvbmVfbnVtYmVyIjp7InR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIiwiZGVzY3JpcHRpb24iOiJ0aGUgcGhvbmUgbnVtYmVyIG9mIHRoZSBjdXN0b21lciAifSwic2VyaXZjZV90eXBlIjp7InR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIiwiZGVzY3JpcHRpb24iOiJ0aGUgc2VyaXZjZSB0eXBlIGZvciB0aGUgYXBwb2ludGVtZW50In0sImNvbmZpcm1lZF90aW1lIjp7InR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIiwiZGVzY3JpcHRpb24iOiJ0aGUgY29uZmlybWVkIHRpbWUgZm9yIHRoZSBhcHBvaW50bWVudCJ9fX0sImRlc2NyaXB0aW9uIjoidGhpcyB0b29sIHdpbGwgYmUgdXNlZCB0byBib29rIHRoZSBhcHBvaW50bWVudCBpbiB0aGUgYnVzaW5lc3MgY2FsZW5kYXIifSwibWVzc2FnZXMiOlt7InR5cGUiOiJyZXF1ZXN0LXN0YXJ0IiwiYmxvY2tpbmciOmZhbHNlfV0sIm9yZ0lkIjoiOWVmOTg4NzItZTE0Yy00YzBiLWJkOWMtZjU4Yjc3NmExZDA1Iiwic2VydmVyIjp7InVybCI6Imh0dHBzOi8vYXNodG9udm9zc3Rlc3RhcHAuYXBwLm44bi5jbG91ZC93ZWJob29rL2UzNjBlYTdiLWNhNWItNDJmYi1iYzMwLTAyMWNiMTkzMjBkOCIsInRpbWVvdXRTZWNvbmRzIjoyMCwiaGVhZGVycyI6eyJYLUNoYXQtSWQiOiIyMDY1ZjJiNi0yYTljLTQxZDctODNkMS1mOTQwOTE0Y2Q0YTUifX19LHsiaWQiOiIxOGFkYmU1NS02NGU2LTQyMzUtOWM4Mi1kMTVlMTJjNWI4YWQiLCJjcmVhdGVkQXQiOiIyMDI2LTAxLTI4VDA5OjAyOjU5LjMyOFoiLCJ1cGRhdGVkQXQiOiIyMDI2LTAxLTI4VDA5OjA0OjMxLjI2N1oiLCJ0eXBlIjoiZnVuY3Rpb24iLCJmdW5jdGlvbiI6eyJuYW1lIjoiY2FuY2VsbF9hcHBvaW50bWVudCIsInBhcmFtZXRlcnMiOnsidHlwZSI6Im9iamVjdCIsInJlcXVpcmVkIjpbXSwicHJvcGVydGllcyI6eyJlbWFpbCI6eyJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiIsImRlc2NyaXB0aW9uIjoiZW1haWwgb2YgdGhlIGN1c3RvbWVyIn19fSwiZGVzY3JpcHRpb24iOiJ0aGlzIHRvb2wgd2lsbCBiZSB1c2VkIHRvIGNhbmNlbGwgdGhlIGFwcG9pbnRtZW50In0sIm1lc3NhZ2VzIjpbeyJ0eXBlIjoicmVxdWVzdC1zdGFydCIsImJsb2NraW5nIjpmYWxzZX1dLCJvcmdJZCI6IjllZjk4ODcyLWUxNGMtNGMwYi1iZDljLWY1OGI3NzZhMWQwNSIsInNlcnZlciI6eyJ1cmwiOiJodHRwczovL2FzaHRvbnZvc3N0ZXN0YXBwLmFwcC5uOG4uY2xvdWQvd2ViaG9vay9lOTIxZDQzZC05OTY2LTRhODQtYjZmNC0zN2FlZjU4NzI3MmIiLCJ0aW1lb3V0U2Vjb25kcyI6MjAsImhlYWRlcnMiOnsiWC1DaGF0LUlkIjoiMjA2NWYyYjYtMmE5Yy00MWQ3LTgzZDEtZjk0MDkxNGNkNGE1In19fV19LCJmaXJzdE1lc3NhZ2UiOiJIZWxsbyB0aGlzIGlzIEVtaWx5IGZyb20gIENvb2xBaXIgSFZBQyBTZXJ2aWNlcy4gSG93IG1heSBpIGhlbHAgeW91IHRvZGF5PyIsInZvaWNlbWFpbE1lc3NhZ2UiOiJQbGVhc2UgY2FsbCBiYWNrIHdoZW4geW91J3JlIGF2YWlsYWJsZS4iLCJlbmRDYWxsTWVzc2FnZSI6Ikdvb2RieWUuIiwidHJhbnNjcmliZXIiOnsibW9kZWwiOiJmbHV4LWdlbmVyYWwtZW4iLCJsYW5ndWFnZSI6ImVuIiwicHJvdmlkZXIiOiJkZWVwZ3JhbSJ9LCJhbmFseXNpc1BsYW4iOnsic3VtbWFyeVBsYW4iOnsiZW5hYmxlZCI6ZmFsc2V9LCJzdWNjZXNzRXZhbHVhdGlvblBsYW4iOnsiZW5hYmxlZCI6ZmFsc2V9fX19fQ==",
+            "mimeType": "application/json"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "5e2d19e3-f099-4934-9b57-5f67954d025e",
+  "meta": {
+    "instanceId": "88b18774195261dbec178cce4b71956ec1010ededb5fd5d6d97a6ffe9540dd9d"
+  },
+  "id": "m2WJDH_YZgkIsaiL6xY_1",
+  "tags": []
+}
